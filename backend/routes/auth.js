@@ -54,10 +54,10 @@ router.post("/login", async (req, res) => {
     });
 
     res.cookie("token", token, {
-      httpOnly: true, // JS on the frontend cannot read this — that's intentional
-      secure: false, // set to true once you serve over https in production
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      httpOnly: true,
+      secure: true, // must be true — required for sameSite: "none" to work at all
+      sameSite: "none", // allows the cookie to be sent across different domains
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.status(200).json({
@@ -72,7 +72,11 @@ router.post("/login", async (req, res) => {
 
 // LOGOUT — clears the cookie
 router.post("/logout", (req, res) => {
-  res.clearCookie("token");
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+  });
   res.status(200).json({ message: "Logged out successfully" });
 });
 
