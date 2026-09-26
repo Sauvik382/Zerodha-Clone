@@ -1,18 +1,23 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 // import { positions } from "../data/data";
 
 const Positions = () => {
-    const [allPositions, setAllPositions] = useState([]);
-  
-    useEffect(() => {
-      axios.get(`${process.env.REACT_APP_BACKEND_URL}/allPositions`).then((res) => {
+  const [allPositions, setAllPositions] = useState([]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    axios
+      .get(`${process.env.REACT_APP_BACKEND_URL}/allPositions`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
         console.log(res.data);
         setAllPositions(res.data);
       });
-    }, []);
-  
+  }, []);
+
   return (
     <>
       <h3 className="title">Positions ({allPositions.length})</h3>

@@ -34,7 +34,10 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-// LOGIN — verifies the password and sets an httpOnly cookie holding a JWT
+// LOGIN — verifies the password and returns a JWT in the response body.
+// (We stopped using a cookie here: the frontend and dashboard live on
+// unrelated domains, so a cross-site cookie can't be relied on — Safari
+// and Firefox block it by default, and Chrome users can block it too.)
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -53,15 +56,9 @@ router.post("/login", async (req, res) => {
       expiresIn: "7d",
     });
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: true, // must be true — required for sameSite: "none" to work at all
-      sameSite: "none", // allows the cookie to be sent across different domains
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
     res.status(200).json({
       message: "Logged in successfully",
+      token,
       user: { id: user._id, name: user.name, email: user.email },
     });
   } catch (err) {
@@ -70,17 +67,13 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// LOGOUT — clears the cookie
+// LOGOUT — nothing to clear server-side anymore (no cookie/session to
+// invalidate); the frontend just deletes the token from its own storage.
 router.post("/logout", (req, res) => {
-  res.clearCookie("token", {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-  });
   res.status(200).json({ message: "Logged out successfully" });
 });
 
-// VERIFY — the dashboard calls this on load to check if the cookie is valid
+// VERIFY — the dashboard calls this on load to check if its stored token is valid
 router.get("/verify", authMiddleware, async (req, res) => {
   try {
     const user = await UserModel.findById(req.userId).select("-password");

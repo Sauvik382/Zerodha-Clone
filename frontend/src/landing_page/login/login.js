@@ -13,14 +13,19 @@ const Login = () => {
     setError("");
 
     try {
-      await axios.post(
+      const res = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/auth/login`,
-        { email, password },
-        { withCredentials: true }
+        { email, password }
       );
 
-      // the backend has set the cookie — send the user to the dashboard app
-      window.location.href = `${process.env.REACT_APP_DASHBOARD_URL}`;
+      const { token } = res.data;
+
+      // Send the user to the dashboard app with the token attached as a
+      // query param. The dashboard reads it once, saves it to its own
+      // localStorage, then strips it back out of the URL.
+      window.location.href = `${process.env.REACT_APP_DASHBOARD_URL}?token=${encodeURIComponent(
+        token
+      )}`;
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
     }

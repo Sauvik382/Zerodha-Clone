@@ -12,12 +12,19 @@ const SellActionWindow = ({ uid }) => {
   const generalContext = useContext(GeneralContext);
 
   const handleSellClick = () => {
-    axios.post(`${process.env.REACT_APP_BACKEND_URL}/newOrder`, {
-      name: uid,
-      qty: stockQuantity,
-      price: stockPrice,
-      mode: "SELL",
-    });
+    const token = localStorage.getItem("token");
+    axios.post(
+      `${process.env.REACT_APP_BACKEND_URL}/newOrder`,
+      {
+        name: uid,
+        qty: stockQuantity,
+        price: stockPrice,
+        mode: "SELL",
+      },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
 
     generalContext.closeSellWindow();
   };

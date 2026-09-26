@@ -8,10 +8,15 @@ const Holdings = () => {
   const [allHoldings, setAllHoldings] = useState([]);
 
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_BACKEND_URL}/allHoldings`).then((res) => {
-      console.log(res.data);
-      setAllHoldings(res.data);
-    });
+    const token = localStorage.getItem("token");
+    axios
+      .get(`${process.env.REACT_APP_BACKEND_URL}/allHoldings`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        console.log(res.data);
+        setAllHoldings(res.data);
+      });
   }, []);
 
   const labels = allHoldings.map((subArray) => subArray["name"]);
