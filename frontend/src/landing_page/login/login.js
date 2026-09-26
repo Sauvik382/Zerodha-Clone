@@ -20,7 +20,7 @@ const Login = () => {
       );
 
       // the backend has set the cookie — send the user to the dashboard app
-      window.location.href = "http://localhost:3001";
+      window.location.href = `${process.env.REACT_APP_DASHBOARD_URL}`;
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
     }

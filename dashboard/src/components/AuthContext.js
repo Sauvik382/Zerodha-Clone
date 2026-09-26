@@ -23,7 +23,7 @@ export const AuthContextProvider = ({ children }) => {
         setIsAuthenticated(false);
         setUser(null);
         // no valid cookie — send the user back to the login page
-        window.location.href = "http://localhost:3000/login";
+        window.location.href = `${process.env.REACT_APP_FRONTEND_URL}/login`;
       })
       .finally(() => {
         setIsLoading(false);
