@@ -14,7 +14,7 @@ export const AuthContextProvider = ({ children }) => {
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_BACKEND_URL}api/auth/verify`, { withCredentials: true })
+      .get(`${process.env.REACT_APP_BACKEND_URL}/api/auth/verify`, { withCredentials: true })
       .then((res) => {
         setUser(res.data.user);
         setIsAuthenticated(true);
